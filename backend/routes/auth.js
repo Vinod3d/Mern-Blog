@@ -54,7 +54,7 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.SECRET, {
+    const token = jwt.sign({ userId: user._id, username: user.username, email: user.email }, process.env.SECRET, {
       expiresIn: '3d',
     });
 
@@ -69,14 +69,30 @@ router.post('/login', async (req, res) => {
 
 
 // Logout Route
-router.post('/logout', (req, res) => {
-  // Clear the JWT token on the client-side. In this example, we clear the 'token' cookie.
-  res.clearCookie('token');
+router.get('/logout', (req, res) => {
+  try{
+    // Clear the JWT token on the client-side. In this example, we clear the 'token' cookie.
+    res.clearCookie('token');
+  
+    // Send a response indicating successful logout.
+    res.status(200).json({ message: 'Logout successful' });
+  }
 
-  // Send a response indicating successful logout.
-  res.status(200).json({ message: 'Logout successful' });
+  catch(err){
+    res.status(500).json(err)
+  }
 });
 
 
+//REFETCH USER
+router.get("/refetch", (req,res)=>{
+  const token=req.cookies.token
+  jwt.verify(token,process.env.SECRET,{},async (err,data)=>{
+      if(err){
+          return res.status(404).json(err)
+      }
+      res.status(200).json(data)
+  })
+})  
 
 module.exports = router;
