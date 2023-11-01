@@ -10,7 +10,8 @@ const fs = require('fs');
 const authRoute = require('./routes/auth')
 const postRoute=require('./routes/posts')
 const userRoute=require('./routes/users')
-const commentRoute=require('./routes/comments')
+const commentRoute=require('./routes/comments');
+const path = require('path');
 
 
 
@@ -18,6 +19,7 @@ const commentRoute=require('./routes/comments')
 app.use(express.json())
 app.use(cors({origin:"http://localhost:5173",credentials:true}))
 app.use(cookieParser())
+app.use("/images",express.static(path.join(__dirname,"/images")))
 app.use("/api/auth", authRoute)
 app.use("/api/users",userRoute)
 app.use("/api/posts",postRoute)
@@ -35,8 +37,7 @@ const storage = multer.diskStorage({
         cb(null, imagesDirectory); // Use the existing or newly created "images" directory
     },
     filename: (req, file, cb) => {
-        const uniqueFilename = `${Date.now()}-${file.originalname}`;
-        cb(null, uniqueFilename);
+        cb(null, req.body.img);
     }
 });
 

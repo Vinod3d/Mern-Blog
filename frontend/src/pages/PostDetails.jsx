@@ -6,7 +6,7 @@ import {MdDelete} from 'react-icons/md'
 import Comment from '../components/Comment'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
-import { URL } from '../url'
+import { URL, IF } from '../url'
 import { UserContext } from '../context/UserContext'
 import Loader from '../components/Loader'
 
@@ -55,7 +55,8 @@ const PostDetails = () => {
             <p>{new Date(post.updatedAt).toString().slice(16,24)}</p>
           </div>
         </div>
-        <img src={post.photo} alt="" className="w-full  mx-auto mt-8" />
+        
+        <img src={IF+post.photo} alt="" className="w-full  mx-auto mt-8" />
         <p className='mx-auto mt-8'>{post.desc}</p>
         <div className="flex items-center mt-8 space-x-4 font-semibold">
           <p>Categories:</p>

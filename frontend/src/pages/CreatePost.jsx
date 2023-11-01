@@ -47,7 +47,7 @@ const CreatePost = () => {
 
         if(file){
             const data = new FormData(); // Create a new FormData object to store data for the image upload.
-            const filename = Date.now() + file.name; // Generate a unique filename for the uploaded image using the current timestamp and the original file name.
+            const filename = Date.now()+'-'+file.name; // Generate a unique filename for the uploaded image using the current timestamp and the original file name.
             data.append("img", filename); // Append the unique filename to the FormData object with the field name "img."
             data.append("file", file); // Append the selected file to the FormData object with the field name "file."
             post.photo = filename; // Update the "post" object with the "photo" property set to the generated filename for future reference.
@@ -67,7 +67,7 @@ const CreatePost = () => {
 
 
 
-        // Create a post
+        //post upload
         try{
           const res=await axios.post(URL+"/api/posts/create",post,{withCredentials:true})
           navigate("/posts/post/"+res.data._id)

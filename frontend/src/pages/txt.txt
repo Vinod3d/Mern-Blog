@@ -120,3 +120,13 @@ const CreatePost = () => {
 }
 
 export default CreatePost
+
+
+
+
+
+
+
+
+
+this line not work,  const uniqueFilename = file.originalname;.            but this line perfectly work,  const uniqueFilename = req.body.img;
