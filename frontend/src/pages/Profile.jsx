@@ -15,6 +15,7 @@ const Profile = () => {
   const [password, setPassword] = useState("")
   const {user, setUser} = useContext(UserContext)
   const navigate = useNavigate()
+  const [posts,setPosts]=useState([])
   const [updated, setUpdated] = useState(false)
 console.log(user)
 
@@ -54,8 +55,23 @@ console.log(user)
     }
   }
 
+  const fetchUserPosts = async ()=>{
+    try {
+      const res=await axios.get(URL+"/api/posts/user/"+user.userId)
+      // console.log(res.data)
+      setPosts(res.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(()=>{
     fetchProfile()
+  },[param])
+
+  useEffect(()=>{
+    fetchUserPosts()
+  
   },[param])
   return (
     <div>
@@ -63,12 +79,9 @@ console.log(user)
         <div className="min-h-[80vh] px-8 lg:px-[200px] mt-8 flex md:flex-row flex-col-reverse md:items-start items-start">
             <div className="flex flex-col md:w-[70%] w-full mt-8 md:mt-0">
                 <h1 className="text-xl font-bold mb-4">Your posts:</h1>
-                <ProfilePosts/>
-                <ProfilePosts/>
-                <ProfilePosts/>
-                <ProfilePosts/>
-                <ProfilePosts/>
-                <ProfilePosts/>
+                {posts?.map((p)=>(
+                  <ProfilePosts key={p._id} p={p}/>
+                ))}
             </div>
             <div className="md:sticky md:top-16  flex justify-start md:justify-end items-start md:w-[30%] w-full lg:items-end ">
                 <div className=" flex flex-col space-y-4 items-start">

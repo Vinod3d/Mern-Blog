@@ -10,7 +10,7 @@ import { UserContext } from '../context/UserContext'
 
 const Home = () => {
   const {search}=useLocation()
-  const [posts, setPosts] = React.useState([])
+  const [posts, setPosts] = useState([])
   const [noResults, setNoResults]=useState(false)
   const [loader, setLoader] = useState(false)
   const {user} = useContext(UserContext)
