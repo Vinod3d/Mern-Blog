@@ -27,6 +27,7 @@ router.post("/create", async (req,res)=>{
 router.delete('/:id', verifyToken, async(req,res)=>{
     try{
         await Post.findByIdAndDelete(req.params.id);
+        await Comment.deleteMany({postId:req.params.id})
         res.status(200).json("User has been deleted")
     }
 

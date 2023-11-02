@@ -4,7 +4,7 @@ import Footer from '../components/Footer'
 import {BiEdit} from 'react-icons/bi'
 import {MdDelete} from 'react-icons/md'
 import Comment from '../components/Comment'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { URL, IF } from '../url'
 import { UserContext } from '../context/UserContext'
@@ -14,10 +14,10 @@ const PostDetails = () => {
   const postId = useParams().id
   const [post, setPost] = useState({})
   const {user} = useContext(UserContext)
+  const [comments, setComments] = useState([])
+  const [comment, setComment] = useState('')
   const [loader, setLoader] =useState(false)
-
-  console.log("user", user)
-  console.log("post", post)
+  const navigate = useNavigate()
 
   const fetchPost = async()=>{
     setLoader(true)
@@ -33,9 +33,49 @@ const PostDetails = () => {
     }
   }
 
+  const handleDeletePost = async()=>{
+    try {
+      await axios.delete(URL+"/api/posts/"+postId,{withCredentials:true})
+      navigate("/")
+    } catch (error) {
+      console.log(err)
+    }
+  }
+
   useEffect(()=>{
     fetchPost();
   },[postId])
+
+  const fetchPostComments=async()=>{
+    try {
+      const res = await axios.get(URL+"/api/comments/post/"+postId)
+      setComments(res.data)
+    } catch (error) {
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    fetchPostComments();
+  },[postId])
+
+
+  const postComment = async(e)=>{
+    e.preventDefault()
+    try {
+      const res = await axios.post(URL+"/api/comments/create",{
+        comment: comment,
+        author: user.username,
+        postId: postId,
+        userId:user.userId,
+      }, {withCredentials: true})
+      window.location.reload(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+
   return (
     <div>
       <Navbar/>
@@ -43,8 +83,8 @@ const PostDetails = () => {
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-black md:text-3xl">{post.title}</h1>
           {user?.userId===post.userId && <div className="flex items-center justify-center space-x-2">
-            <p className="cursor-pointer"><BiEdit/></p>
-            <p className="cursor-pointer"><MdDelete/></p>
+            <p className="cursor-pointer" onClick={()=>navigate("/edit/"+postId)}><BiEdit/></p>
+            <p className="cursor-pointer" onClick={handleDeletePost}><MdDelete/></p>
          </div>}
           
         </div>
@@ -70,14 +110,15 @@ const PostDetails = () => {
         </div>
         <div className="flex flex-col mt-4">
           <h3 className='mt-6 mb-4 font-semibold'>Comments:</h3>
-          <Comment/>
-          <Comment/>
+          {comments?.map((c)=>(
+            <Comment key={c._id} c={c} post={post}/>
+          ))}
         </div>
         
          {/* write a comment */}
          <div className="w-full flex flex-col mt-4 md:flex-row">
-          <input  type="text" placeholder="Write a comment" className="md:w-[80%] outline-none py-2 px-4 mt-4 md:mt-0"/>
-          <button  className="bg-black text-sm text-white px-2 py-2 md:w-[20%] mt-4 md:mt-0">Add Comment</button>
+          <input onChange={(e)=>setComment(e.target.value)}  type="text" placeholder="Write a comment" className="md:w-[80%] outline-none py-2 px-4 mt-4 md:mt-0"/>
+          <button onClick={postComment} className="bg-black text-sm text-white px-2 py-2 md:w-[20%] mt-4 md:mt-0">Add Comment</button>
          </div>
       </div>}
       <Footer/>

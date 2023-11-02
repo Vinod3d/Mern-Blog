@@ -14,7 +14,6 @@ const Home = () => {
   const [noResults, setNoResults]=useState(false)
   const [loader, setLoader] = useState(false)
   const {user} = useContext(UserContext)
-  console.log(user)
 
 
   const fetchPosts = async () =>{
