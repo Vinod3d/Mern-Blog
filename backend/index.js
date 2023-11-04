@@ -24,6 +24,9 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     next();
 });
+app.get("/", (req, res) => {
+    res.json("Hello");
+})
 app.use(cookieParser())
 app.use("/images",express.static(path.join(__dirname,"/images")))
 app.use("/api/auth", authRoute)
