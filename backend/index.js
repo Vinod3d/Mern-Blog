@@ -20,7 +20,7 @@ app.use(express.json())
 // app.use(cors({origin:"http://localhost:5173",credentials:true}))
 app.use(cors(
     {
-        origin: ["https://mern-blogs-app.vercel.app/"],
+        origin: ["https://mern-blogs-app.vercel.app"],
         methods: ["POST", "GET"],
         credentials: true
     }
