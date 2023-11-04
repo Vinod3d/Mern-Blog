@@ -21,7 +21,7 @@ app.use(express.json())
 app.use(cors(
     {
         origin: ["https://mern-blogs-app.vercel.app/"],
-        // methods: ["POST", "GET"],
+        methods: ["POST", "GET"],
         credentials: true
     }
 ));
