@@ -1,132 +1,65 @@
-//createPost
-
-import React, { useContext, useState } from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import {ImCross} from 'react-icons/im'
-import { UserContext } from '../context/UserContext'
-import axios from 'axios'
-import { URL } from '../url'
-
-const CreatePost = () => {
-
-    const [title, setTitle] = useState('')
-    const [desc, setDesc] = useState('')
-    const [file, setFile] = useState(null)
-    const {user}=useContext(UserContext)
-    const [cat, setCat] = useState("")
-    const [cats, setCats] = useState([])
-
-    console.log('user', user)
-    console.log("file", file)
-
-    const deleteCategory = (i) =>{
-        let updatedCats = [...cats]
-        updatedCats.splice(i, 1);
-        setCats(updatedCats)
-    }
-
-    const addCategory = () => {
-        let updatedCats = [...cats]
-        updatedCats.push(cat)
-        setCats("")
-        setCats(updatedCats)
-    }
-
-    const handleCreate = async(e)=>{
-        e.preventDefault()
-        const post={
-            title,
-            desc,
-            username:user.username,
-            userId:user.userId,
-            categories:cats
-        }
-
-        // Create a FormData object to handle file upload
-        const data = new FormData();
-        if(file){
-            data.append("img", file);
-            try{
-                const imgUpload=await axios.post(URL+"/api/upload",data)
-            }
-            catch(err){
-                console.log(err)
-            }
-        }
-
-        // Append the post data to FormData
-        data.append('postData', JSON.stringify(post));
-
-        try{
-            const res=await axios.post(URL+"/api/posts/create", data, {withCredentials:true})
-            navigate("/posts/post"+res.data._id)
-        }
-        catch(err){
-            console.log(err)
-        }
-
-        
+require('dotenv').config();
+require('./routes/conn')
+const express = require('express')
+const app = express()
+const mongoose = require("mongoose")
+const cors = require('cors')
+const multer=require("multer")
+const cookieParser=require('cookie-parser')
+const fs = require('fs');
+const authRoute = require('./routes/auth')
+const postRoute=require('./routes/posts')
+const userRoute=require('./routes/users')
+const commentRoute=require('./routes/comments');
+const path = require('path');
 
 
 
-         // Now, you can send the FormData to your server for processing, e.g., using fetch or Axios.
 
-        // fetch('/create', {
-        //     method: 'POST',
-        //     body: data,
-        // })
+app.use(express.json())
+// app.use(cors({origin:"http://localhost:5173",credentials:true}))
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://mern-blogs-app.vercel.app');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
+app.use(cookieParser())
+app.use("/images",express.static(path.join(__dirname,"/images")))
+app.use("/api/auth", authRoute)
+app.use("/api/users",userRoute)
+app.use("/api/posts",postRoute)
+app.use("/api/comments",commentRoute)
 
-        // .then(response => response.json())
-        // .then(data => {
-        //     console.log(data);
-        // })
-        // .catch(error => {
-        //     console.error(error);
-        // });
-    }
-
-  return (
-    <div>
-        <Navbar/>
-        <div className="px-6 lg:px-[200px] mt-8">
-            <h1 className='font-bold md:text-2xl text-xl'>Create a post</h1>
-            <form className='w-full flex flex-col space-y-4 md:space-y-8 mt-4'>
-                <input onChange={(e)=>setTitle(e.target.value)} type="text" placeholder='Enter post title' className='px-4 py-2 outline-none'/>
-                <input onChange={(e)=>setFile(e.target.files[0])} type="file" className='px-4'/>
-                <div className="flex flex-col">
-                    <div className="flex items-center space-x-4 md:space-x-8">
-                        <input value={cat} onChange={(e)=>setCat(e.target.value)}  className='px-4 py-2 outline-none' placeholder='Enter post category' type="text"/>
-                        <div onClick={addCategory}  className='bg-black text-white px-4 py-2 font-semibold cursor-pointer'>Add</div>
-                    </div>
-
-                    {/* Categories */}
-                    <div className='flex px-4 mt-3'>
-                        {cats?.map((c, i)=>(
-                            <div key={i} className='flex justify-center items-center space-x-2 mr-4 bg-gray-200 px-2 py-1 rounded-md'>
-                                <p>{c}</p>
-                                <p onClick={()=>deleteCategory(i)} className='text-white bg-black rounded-full cursor-pointer p-1 text-sm'><ImCross/></p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <textarea onChange={(e)=>setDesc(e.target.value)} rows={15} cols={30} className='px-4 py-2 outline-none' placeholder='Enter post description'/>
-                <button onClick={handleCreate} className='bg-black w-full md:w-[20%] mx-auto text-white font-semibold px-4 py-2 md:text-xl text-lg'>Create</button>
-            </form>
-        </div>
-        <Footer/>
-    </div>
-  )  
+//image upload
+// Create the "images" directory if it doesn't exist
+const imagesDirectory = 'images';
+if (!fs.existsSync(imagesDirectory)) {
+    fs.mkdirSync(imagesDirectory);
 }
 
-export default CreatePost
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, imagesDirectory); // Use the existing or newly created "images" directory
+    },
+    filename: (req, file, cb) => {
+        cb(null, req.body.img);
+    }
+});
 
+const upload = multer({ storage: storage });
 
+app.post('/api/upload', upload.single('file'), (req, res) => {
+    try {
+        // Your file upload logic here
+        res.status(200).json("Image has been uploaded successfully");
+    } catch (error) {
+        console.error("Error while uploading:", error);
+        res.status(500).json("Image upload failed");
+    }
+}); 
+  
 
-
-
-
-
-
-
-this line not work,  const uniqueFilename = file.originalname;.            but this line perfectly work,  const uniqueFilename = req.body.img;
+app.listen(process.env.PORT, ()=>{
+    console.log("server is running on port " +  process.env.PORT);
+})
