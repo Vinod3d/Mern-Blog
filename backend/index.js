@@ -17,7 +17,14 @@ const path = require('path');
 
 
 app.use(express.json())
-app.use(cors({ origin: "https://mern-blogs-app.vercel.app", credentials: true }));
+// app.use(cors({ origin: "https://mern-blogs-app.vercel.app", credentials: true }));
+// Set up CORS for your serverless functions
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', 'https://mern-blogs-app.vercel.app');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    next();
+});
 app.get("/", (req, res) => {
     res.json("Hello");
 })
