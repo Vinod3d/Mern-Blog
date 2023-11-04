@@ -14,7 +14,12 @@ const app = express();
 const router = express.Router();
 
 app.use(express.json());
-app.use(cors({ origin: 'https://mern-blogs-app.vercel.app', credentials: true }));
+app.use(cors({
+    "origin": "*",
+    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    "preflightContinue": false,
+    "optionsSuccessStatus": 204
+  }));
 app.use(cookieParser();
 app.use('/images', express.static(path.join(__dirname, '/images')));
 
