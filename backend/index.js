@@ -17,13 +17,7 @@ const path = require('path');
 
 
 app.use(express.json())
-//app.use(cors({origin:"http://localhost:5173",credentials:true}))
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://mern-blogs-app.vercel.app');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    next();
-});
+app.use(cors({origin:"http://localhost:5173",credentials:true}))
 app.use(cookieParser())
 app.use("/images",express.static(path.join(__dirname,"/images")))
 app.use("/api/auth", authRoute)
