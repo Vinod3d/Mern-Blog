@@ -4,7 +4,7 @@ Welcome to **The Blog Odyssey**, a modern blog platform where you can explore ar
 
 ## Website Link
 
-Visit the live website here: [https://www.yourblogwebsite.com](https://www.yourblogwebsite.com)
+Visit the live website here: [The-Blog-Odyssey](https://mern-blog-9dez.onrender.com)
 
 ## Features
 
@@ -23,7 +23,7 @@ Visit the live website here: [https://www.yourblogwebsite.com](https://www.yourb
 ### Home Page
 ![Home Page](/image/home.png)
 
-### Blog Post Example
+### Dashboard
 ![Blog Post](/image/dashboard.png)
 
 ## Technologies Used
