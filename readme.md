@@ -21,10 +21,10 @@ Visit the live website here: [https://www.yourblogwebsite.com](https://www.yourb
 ## Screenshots
 
 ### Home Page
-![Home Page](/images/home.png)
+![Home Page](/image/home.png)
 
 ### Blog Post Example
-![Blog Post](/images/dashboard.png)
+![Blog Post](/image/dashboard.png)
 
 ## Technologies Used
 
